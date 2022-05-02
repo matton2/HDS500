@@ -1,0 +1,115 @@
+---
+title: Homework Assignment 1
+author: Matthew Onimus
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+  toc: true
+number_sections: true
+toc_float: true
+---
+  
+<div style="margin-bottom:100px;">
+  
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+$~$
+
+# Complete the following :
+
+## load the tidyverse:
+
+I also loaded in the `here` and `DBI` packages to make filepaths and database connections easier.
+
+```{r}
+library(tidyverse)
+library(here)
+library(DBI)
+```
+
+
+## Connect to the database:
+
+**I have changed the below chunk to align with current dbplyr functions and DBI connection strings.  I have also used the `here` package to reference the correct path.**
+
+```{r}
+
+# NHANES_DB <- src_sqlite(
+#   #TODO , 
+#   create = FALSE)
+
+con <- DBI::dbConnect(RSQLite::SQLite(), here("NHANES_DB.db"))
+
+
+```
+
+Create a list of tables called `NHANES_Tables`.  I have made this a little easier using the DBI package.
+
+```{r}
+
+NHANES_Tables <- dbListTables(con)
+
+# NHANES_Tables <-  src_tbls(#TODO) [! src_tbls(#TODO) %in% c("sqlite_stat1" , 'sqlite_stat4') ]
+
+NHANES_Tables
+
+```
+
+There are `r length(NHANES_Tables)` tables in the NHANES database.
+
+```{r}
+
+NHANES_table_helper <- function(Table_Name){
+  url_link <- paste0('https://wwwn.cdc.gov/Nchs/Nhanes/2017-2018/',Table_Name,'_J.htm')
+  return(url_link)
+}
+
+```
+
+
+
+```{r}
+
+# i typically try not to reference global variables in a function call, I have updated the below function to take all the required arguments.  Also updated the first cat in the else statement to be a warning 
+
+Open_NHANES_table_help <- function(Table_Name, NHANES_Tables){
+  
+  if(Table_Name %in% NHANES_Tables){
+    return(
+      NHANES_table_helper(Table_Name)
+      )
+  } else {
+    ln1 <- paste0("ERROR : ", Table_Name, " is not a valid table name! \n")
+    ln2 <- 'Please Choose one of : \n'
+    ln3 <- NHANES_Tables
+    warning(ln1)
+    cat(ln2)
+    cat(ln3)
+  }
+}
+
+# added the browseURL code to open the returned url
+browseURL(Open_NHANES_table_help('TCHOL', NHANES_Tables))
+
+# error checking test
+Open_NHANES_table_help('TCOL', NHANES_Tables)
+
+
+```
+
+----------------------------------------------------------------------------
+  
+$~$
+
+# Code Appendix
+
+$~$
+
+$~$
+
+```{r show-code, ref.label=setdiff(all_labels(),c('setup')), echo = TRUE, eval=FALSE}
+
+```

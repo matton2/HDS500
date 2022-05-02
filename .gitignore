@@ -7,6 +7,7 @@
 
 # User-specific files
 .Ruserdata
+NHANES_DB.db
 
 # Example code in package build process
 *-Ex.R
